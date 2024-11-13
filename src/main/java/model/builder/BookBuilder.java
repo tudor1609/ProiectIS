@@ -4,7 +4,7 @@ import model.Book;
 
 import java.time.LocalDate;
 
-//Design Pattern Creational
+
 public class BookBuilder {
     private Book book;
 
