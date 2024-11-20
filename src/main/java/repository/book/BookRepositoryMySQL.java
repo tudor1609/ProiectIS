@@ -1,4 +1,4 @@
-package repository;
+package repository.book;
 
 import model.Book;
 import model.builder.BookBuilder;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BookRepositoryMySQL implements BookRepository{
+public class BookRepositoryMySQL implements BookRepository {
 
     private final Connection connection;
 
@@ -21,6 +21,7 @@ public class BookRepositoryMySQL implements BookRepository{
         String sql = "SELECT * FROM book;";
 
         List<Book> books = new ArrayList<>();
+
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -28,38 +29,39 @@ public class BookRepositoryMySQL implements BookRepository{
             while (resultSet.next()){
                 books.add(getBookFromResultSet(resultSet));
             }
-        } catch (SQLException e){
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return books;
     }
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT * FROM book WHERE id=" + id;
-
+        String sql = "SELECT * FROM book WHERE id = " + id;
         Optional<Book> book = Optional.empty();
-        try {
+
+        try{
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 
-            if (resultSet.next()) {
+            if (resultSet.next()){
                 book = Optional.of(getBookFromResultSet(resultSet));
             }
-        } catch (SQLException e){
+
+        }catch (SQLException e){
             e.printStackTrace();
         }
+
         return book;
     }
 
 
-    @Override
     public boolean save(Book book) {
-
-//        String newSql = "INSERT INTO book VALUES(null, \'" + book.getAuthor() +"\', \'" + book.getTitle()+"\', \'" + book.getPublishedDate() + "\' );";
         String newSql = "INSERT INTO book VALUES(null, ?, ?, ?);";
 
-        try{
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(newSql);
             preparedStatement.setString(1, book.getAuthor());
             preparedStatement.setString(2, book.getTitle());
@@ -69,7 +71,7 @@ public class BookRepositoryMySQL implements BookRepository{
 
             return (rowsInserted != 1) ? false : true;
 
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
@@ -110,6 +112,5 @@ public class BookRepositoryMySQL implements BookRepository{
                 .setAuthor(resultSet.getString("author"))
                 .setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate())
                 .build();
-
     }
 }

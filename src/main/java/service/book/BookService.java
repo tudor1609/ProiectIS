@@ -1,8 +1,6 @@
-package service;
-
+package service.book;
 import model.Book;
-
-import java.util.*;
+import java.util.List;
 
 public interface BookService {
     List<Book> findAll();
