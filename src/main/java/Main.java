@@ -1,51 +1,37 @@
 import database.DatabaseConnectionFactory;
 import model.Book;
 import model.builder.BookBuilder;
-import repository.BookRepository;
-import repository.BookRepositoryMock;
-import repository.BookRepositoryMySQL;
-import service.BookService;
-import service.BookServiceImpl;
+import repository.book.BookRepository;
+import repository.book.BookRepositoryMySQL;
 
 import java.sql.Connection;
 import java.time.LocalDate;
 
 public class Main {
+
     public static void main(String[] args){
         System.out.println("Hello world!");
 
-        Book book = new BookBuilder()
-                .setTitle("Ion")
-                .setAuthor("Liviu Rebreanu")
-                .setPublishedDate(LocalDate.of(1910, 10, 20))
+
+        Book book_fram = new BookBuilder()
+                .setTitle("Fram Ursul Polar")
+                .setAuthor("Cezar Petrescu")
+                .setPublishedDate(LocalDate.of(2003, 9, 16))
                 .build();
 
-        System.out.println(book);
-//
-//
-//        BookRepository bookRepository = new BookRepositoryMock();
-//
-//        bookRepository.save(book);
-//        bookRepository.save(new BookBuilder().setAuthor("Ioan Slavici").setTitle("Moara cu noroc").setPublishedDate(LocalDate.of(1950, 2, 10)).build());
-//        System.out.println(bookRepository.findAll());
-//        bookRepository.removeAll();
-//        System.out.println(bookRepository.findAll());
+        System.out.println("Book created: " + book_fram.getAuthor() + " - " + book_fram.getTitle());
 
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(false).getConnection();
+
         BookRepository bookRepository = new BookRepositoryMySQL(connection);
-        //BookService bookService = new BookServiceImpl(bookRepository);
+        boolean saveSuccessful = bookRepository.save(book_fram);
+        if (saveSuccessful) {
+            System.out.println("Book saved successfully!");
+        } else {
+            System.out.println("Failed to save the book.");
+        }
 
-        bookRepository.save(book);
+        System.out.println("Books in database:");
         System.out.println(bookRepository.findAll());
-
-
-//
-//        Book bookMoaraCuNoroc = new BookBuilder().setAuthor("\"', '', null); DROP TABLE book; -- \");").setTitle("Moara cu noroc").setPublishedDate(LocalDate.of(1950, 2, 10)).build();
-//        bookRepository.save(bookMoaraCuNoroc);
-//        System.out.println(bookRepository.findAll());
-//        bookService.delete(bookMoaraCuNoroc);
-//        bookService.delete(book);
-//        System.out.println(bookService.findAll());
-
     }
 }
